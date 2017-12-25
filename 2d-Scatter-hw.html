@@ -20,6 +20,12 @@
             font-size: 11px;
             fill: blue;
         }
+/*
+        .dropdown{
+            position: absolute;
+            right:0px;
+        }
+*/
 
         #tooltip {
             position: absolute;
@@ -38,6 +44,7 @@
         #tooltip.hidden {
             display: none;
         }
+        
 
     </style>
 </head>
@@ -85,9 +92,33 @@
                     }).on("click", function() {
                         var val = d3.select(this).attr("value")
                         update(val);
-                    })
+                    });
             }
-
+            //畫出下拉式選單們
+            var selection = d3.select("body")
+                .append("select")
+                .selectAll("option")
+                .data(uArr);
+            
+            selection.enter()
+                .append("option")
+                .attr({
+                    value: function(d){
+                        return d;
+                    }
+                }).text(function(d){
+                        return d;
+                });
+            
+            d3.select("select")
+              .insert("option",":first-child")
+              .attr("value","顯示全部").text("顯示全部");
+            
+            d3.select("select").on("change",function(){
+                var industryName = d3.select("select").property("value");
+                update(industryName);
+            })
+            
             function update(iName) {
                 var fDataSet = dataSet.filter(function(d) {
                     return d.industry === iName // 保留下來
@@ -202,8 +233,8 @@
 
                     var tooltip = d3.select("#tooltip")
                         .style({
-                            left: (xPos + 10) + "px", // 加()因為要做平移
-                            top: (yPos + 10) + "px"
+                            left: (xPos+10)+"px", // 加()因為要做平移
+                            top: (yPos+10)+"px"
                         });
                     tooltip.select("#city").text(d.city);
                 
